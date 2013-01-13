@@ -1,6 +1,7 @@
 (ns twitter-stats.core
   (:use 
     [twitter-stats.creds]
+    [twitter-stats.redis]
     [twitter.oauth]
     [twitter.callbacks]
     [twitter.callbacks.handlers]
@@ -35,10 +36,12 @@
   [username]
   (:body (mentions :oauth-creds *creds* :params {:screen-name username})))
 
-(defn _test []
-  (println "hello world"))
+(defn _test [username]
+  (verify-credentials :oauth-creds *creds* :params {:screen-name username})
+  )
+  ;(println "hello world"))
 
-(defn listfriends
-  [username]
-  (:body (list-followers :oauth-creds *creds* :params {:screen-name username :cursor -1})))
+;(defn listfriends
+;  [username]
+;  (:body (list-followers :oauth-creds *creds* :params {:screen-name username :cursor -1})))
 
