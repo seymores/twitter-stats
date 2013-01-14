@@ -17,27 +17,27 @@
 
 (defn show
   [username]
-  (:body (show-user :oauth-creds *creds* :params {:screen-name username})))
+  (:body (users-show :oauth-creds *creds* :params {:screen-name username})))
 
 (defn friends
   [username]
-  (:body (show-friends :oauth-creds *creds* :params {:screen-name username})))
+  (:body (friends-ids :oauth-creds *creds* :params {:screen-name username})))
 
 (defn followers
   [username]
-  (:body (show-followers :oauth-creds *creds* :params {:screen-name username})))
+  (:body (followers-ids :oauth-creds *creds* :params {:screen-name username})))
 
 (defn friendships
   [username friend]
-  (:body (show-friendship :oauth-creds *creds* 
+  (:body (friendship-show :oauth-creds *creds* 
                           :params {:source-screen-name username :target-screen-name friend})))
 
 (defn _mentions
   [username]
-  (:body (mentions :oauth-creds *creds* :params {:screen-name username})))
+  (:body (statuses-mentions-timeline :oauth-creds *creds* :params {:screen-name username})))
 
 (defn _test [username]
-  (verify-credentials :oauth-creds *creds* :params {:screen-name username})
+  (account-verify-credentials :oauth-creds *creds* :params {:screen-name username})
   )
   ;(println "hello world"))
 
