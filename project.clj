@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [twitter-api "0.6.13"]
+                 [twitter-api "0.7.0"]
                  [com.taoensso/carmine "1.2.1"]])
 
 ; https://github.com/ptaoussanis/carmine
