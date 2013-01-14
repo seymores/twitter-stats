@@ -1,13 +1,13 @@
 # twitter-stats
 
-A Clojure library designed to ... well, that part is up to you.
+Twitter statistic tool in Clojure.
 
 ## Usage
 
-FIXME
+(require '[twitter-stats.core])
 
 ## License
 
-Copyright © 2013 FIXME
-
+Copyright © 2013 
 Distributed under the Eclipse Public License, the same as Clojure.
+
