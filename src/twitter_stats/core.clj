@@ -39,7 +39,12 @@
 (defn _test [username]
   (account-verify-credentials :oauth-creds *creds* :params {:screen-name username})
   )
-  ;(println "hello world"))
+;(println "hello world"))
+
+(defn created-at-to-date 
+  "Convert twitter created_at string date time to actual date object"
+  [dateval]
+  (. (SimpleDateFormat. "EEE MMM dd HH:mm:ss Z yyyy") parse dateval))
 
 ;(defn listfriends
 ;  [username]
