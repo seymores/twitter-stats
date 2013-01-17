@@ -8,3 +8,13 @@
 (defn ping 
   []
   (wcar (car/ping)))
+
+(defn save->db
+  "Save to db"
+  [k v]
+  (wcar (car/set k v)))
+
+(defn get<-db
+  "Get value from db store"
+  [k]
+  (wcar (car/get k)))
