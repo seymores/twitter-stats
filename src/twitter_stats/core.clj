@@ -6,6 +6,7 @@
     [twitter.callbacks]
     [twitter.callbacks.handlers]
     [twitter.api.restful])
+  (:require clojure.pprint)
   (:import (twitter.callbacks.protocols SyncSingleCallback)))
 
 ;Use case:
@@ -21,8 +22,33 @@
   (:body (friends-ids :oauth-creds *creds* :params {:screen-name username})))
 
 (defn followers
-  [username]
-  (:body (followers-ids :oauth-creds *creds* :params {:screen-name username})))
+  ([username]
+   (let [b (:body (followers-ids :oauth-creds *creds* :params {:screen-name username }))
+         ids (:ids b)
+         cursor (:next_cursor b)
+         ]))
+  ([username cursor]
+   (:body (followers-ids :oauth-creds *creds* :params {:screen-name username :cursor cursor}))))
+
+(defn followers-all
+  "Get followers for the given twitter account"
+  [username cursor]
+  (let [v {:screen-name username}
+        param (merge v (when (> cursor 0) {:cursor cursor})) 
+        fo (:body (followers-ids :oauth-creds *creds* :params param))
+        cur (:next_cursor fo)]
+    (print str (:ids fo) "\n\n ---- \n")
+    (conj (when (> cur 0 ) (followers-all username cur)) (:ids fo))))
+
+(defn friends-all
+  "Get friends for the given twitter account"
+  [username cursor]
+  (let [v {:screen-name username}
+        param (merge v (when (> cursor 0) {:cursor cursor})) 
+        fo (:body (friends-ids oauth-creds *creds* :params param))
+        cur (:next_cursor fo)]
+    (print str (:ids fo) "\n\n ---- \n")
+    (conj (when (> cur 0 ) (friends-all username cur)) (:ids fo))))
 
 (defn show
   [username]
@@ -46,10 +72,6 @@
   "Convert twitter created_at string date time to actual date object"
   [dateval]
   (. (java.text.SimpleDateFormat. "EEE MMM dd HH:mm:ss Z yyyy") parse dateval))
-
-;(defn listfriends
-;  [username]
-;  (:body (list-followers :oauth-creds *creds* :params {:screen-name username :cursor -1})))
 
 (defn dump
   "Save a data dump of a given twitter user"
