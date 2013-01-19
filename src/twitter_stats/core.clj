@@ -6,8 +6,8 @@
     [twitter.callbacks]
     [twitter.callbacks.handlers]
     [twitter.api.restful])
-  (:require clojure.pprint)
-  (:import (twitter.callbacks.protocols SyncSingleCallback)))
+  (:require clojure.pprint))
+  ;(:import (twitter.callbacks.protocols SyncSingleCallback)))
 
 ;Use case:
 ;(def x (show-user 'seymores'))
@@ -41,7 +41,7 @@
         param (merge v (when (pos? cursor) {:cursor cursor})) 
         fo (:body (followers-ids :oauth-creds *creds* :params param))
         cur (:next_cursor fo)]
-    (conj (if (pos? cur) (followers-all username cur) []) (:ids fo))))
+    (into (if (pos? cur) (followers-all username cur) []) (:ids fo))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -52,7 +52,7 @@
         param (merge v (when (pos? cursor) {:cursor cursor})) 
         fo (:body (friends-ids :oauth-creds *creds* :params param))
         cur (:next_cursor fo)]
-    (conj (if (pos? cur) (friends-all username cur) []) (:ids fo))))
+    (into (if (pos? cur) (friends-all username cur) []) (:ids fo))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -74,13 +74,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn _test [username]
-  (account-verify-credentials :oauth-creds *creds* :params {:screen-name username})
-  )
+  (account-verify-credentials :oauth-creds *creds* :params {:screen-name username}))
 ;(println "hello world"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn created-at-to-date 
+(defn created-at->date 
   "Convert twitter created_at string date time to actual date object"
   [dateval]
   (.parse (java.text.SimpleDateFormat. "EEE MMM dd HH:mm:ss Z yyyy") dateval))
