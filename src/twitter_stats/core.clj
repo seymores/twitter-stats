@@ -31,24 +31,22 @@
    (:body (followers-ids :oauth-creds *creds* :params {:screen-name username :cursor cursor}))))
 
 (defn followers-all
-  "Get followers for the given twitter account"
+  "Get followers for the given twitter account as vector"
   [username cursor]
   (let [v {:screen-name username}
         param (merge v (when (> cursor 0) {:cursor cursor})) 
         fo (:body (followers-ids :oauth-creds *creds* :params param))
         cur (:next_cursor fo)]
-    (print str (:ids fo) "\n\n ---- \n")
-    (conj (when (> cur 0 ) (followers-all username cur)) (:ids fo))))
+    (conj (if (> cur 0 ) (followers-all username cur) []) (:ids fo))))
 
 (defn friends-all
-  "Get friends for the given twitter account"
+  "Get friends for the given twitter account as vector"
   [username cursor]
   (let [v {:screen-name username}
         param (merge v (when (> cursor 0) {:cursor cursor})) 
-        fo (:body (friends-ids oauth-creds *creds* :params param))
+        fo (:body (friends-ids :oauth-creds *creds* :params param))
         cur (:next_cursor fo)]
-    (print str (:ids fo) "\n\n ---- \n")
-    (conj (when (> cur 0 ) (friends-all username cur)) (:ids fo))))
+    (conj (if (> cur 0 ) (friends-all username cur) []) (:ids fo))))
 
 (defn show
   [username]
