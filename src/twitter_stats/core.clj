@@ -7,7 +7,6 @@
     [twitter.callbacks.handlers]
     [twitter.api.restful])
   (:require clojure.pprint))
-  ;(:import (twitter.callbacks.protocols SyncSingleCallback)))
 
 ;Use case:
 ;(def x (show-user 'seymores'))
@@ -15,6 +14,8 @@
 
 ;API list - https://github.com/adamwynne/twitter-api/blob/master/src/twitter/api/restful.clj
 ;Twitter API - https://dev.twitter.com/docs/api/1.1
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn friends
   "Returns the user's friend ids"
@@ -27,8 +28,7 @@
   ([username]
    (let [b (:body (followers-ids :oauth-creds *creds* :params {:screen-name username }))
          ids (:ids b)
-         cursor (:next_cursor b)
-         ]))
+         cursor (:next_cursor b) ]))
   ([username cursor]
    (:body (followers-ids :oauth-creds *creds* :params {:screen-name username :cursor cursor}))))
 
@@ -38,44 +38,41 @@
   "Get followers for the given twitter account as vector"
   [username cursor]
   (let [v {:screen-name username}
-        param (merge v (when (pos? cursor) {:cursor cursor})) 
-        fo (:body (followers-ids :oauth-creds *creds* :params param))
-        cur (:next_cursor fo)]
-    (into (if (pos? cur) (followers-all username cur) []) (:ids fo))))
+        p (merge v (when (pos? cursor) {:cursor cursor})) 
+        f (:body (followers-ids :oauth-creds *creds* :params p))
+        c (:next_cursor f)]
+    (into (if (pos? c) (followers-all username c) []) (:ids f))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn friends-all
   "Get friends for the given twitter account as vector"
   [username cursor]
-  (let [v {:screen-name username}
-        param (merge v (when (pos? cursor) {:cursor cursor})) 
-        fo (:body (friends-ids :oauth-creds *creds* :params param))
+  (let [v   {:screen-name username}
+        par (merge v (when (pos? cursor) {:cursor cursor})) 
+        fo  (:body (friends-ids :oauth-creds *creds* :params par))
         cur (:next_cursor fo)]
     (into (if (pos? cur) (friends-all username cur) []) (:ids fo))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn show
+  "Show the user with the given twitter username"
   [username]
   (:body (users-show :oauth-creds *creds* :params {:screen-name username})))
 
-;(defn friendships
-;  [username friend]
-;  (:body (friendship-show :oauth-creds *creds* 
-;                          :params {:source-screen-name username :target-screen-name friend})))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn _mentions
+(defn mentions
+  "Get the mentions for the given user"
   [username]
   (:body (statuses-mentions-timeline :oauth-creds *creds* :params {:screen-name username})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn _test [username]
+(defn verify-credentials [username]
+  "Verify the credential of the oauth account"
   (account-verify-credentials :oauth-creds *creds* :params {:screen-name username}))
-;(println "hello world"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -91,9 +88,9 @@
   [username]
   (let [o (users-show :oauth-creds *creds* :params {:screen-name username})
         d (assoc o :saved-at (java.util.Date.))
-        f (assoc d :friends (friends username))
-        l (assoc f :followers (followers username))]
-    (save->db username l)))
+        r (assoc d :friends (friends-all username 0))
+        l (assoc r :followers (followers-all username 0))]
+    (save->db (.toLowerCase username) l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
