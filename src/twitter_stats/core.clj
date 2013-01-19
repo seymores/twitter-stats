@@ -21,6 +21,8 @@
   [username]
   (:body (friends-ids :oauth-creds *creds* :params {:screen-name username})))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn followers
   ([username]
    (let [b (:body (followers-ids :oauth-creds *creds* :params {:screen-name username }))
@@ -30,23 +32,29 @@
   ([username cursor]
    (:body (followers-ids :oauth-creds *creds* :params {:screen-name username :cursor cursor}))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn followers-all
   "Get followers for the given twitter account as vector"
   [username cursor]
   (let [v {:screen-name username}
-        param (merge v (when (> cursor 0) {:cursor cursor})) 
+        param (merge v (when (pos? cursor) {:cursor cursor})) 
         fo (:body (followers-ids :oauth-creds *creds* :params param))
         cur (:next_cursor fo)]
-    (conj (if (> cur 0 ) (followers-all username cur) []) (:ids fo))))
+    (conj (if (pos? cur) (followers-all username cur) []) (:ids fo))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn friends-all
   "Get friends for the given twitter account as vector"
   [username cursor]
   (let [v {:screen-name username}
-        param (merge v (when (> cursor 0) {:cursor cursor})) 
+        param (merge v (when (pos? cursor) {:cursor cursor})) 
         fo (:body (friends-ids :oauth-creds *creds* :params param))
         cur (:next_cursor fo)]
-    (conj (if (> cur 0 ) (friends-all username cur) []) (:ids fo))))
+    (conj (if (pos? cur) (friends-all username cur) []) (:ids fo))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn show
   [username]
@@ -57,19 +65,27 @@
 ;  (:body (friendship-show :oauth-creds *creds* 
 ;                          :params {:source-screen-name username :target-screen-name friend})))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn _mentions
   [username]
   (:body (statuses-mentions-timeline :oauth-creds *creds* :params {:screen-name username})))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn _test [username]
   (account-verify-credentials :oauth-creds *creds* :params {:screen-name username})
   )
 ;(println "hello world"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn created-at-to-date 
   "Convert twitter created_at string date time to actual date object"
   [dateval]
-  (. (java.text.SimpleDateFormat. "EEE MMM dd HH:mm:ss Z yyyy") parse dateval))
+  (.parse (java.text.SimpleDateFormat. "EEE MMM dd HH:mm:ss Z yyyy") dateval))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn dump
   "Save a data dump of a given twitter user"
@@ -79,6 +95,8 @@
         f (assoc d :friends (friends username))
         l (assoc f :followers (followers username))]
     (save->db username l)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn dump-by-id
   "Save a data dump of a given twitter user by ID"
