@@ -1,6 +1,7 @@
 (ns twitter-stats.core
   (:use 
     [twitter-stats.creds]
+    [twitter-stats.theories]
     [twitter-stats.redis]
     [twitter.oauth]
     [twitter.callbacks]
