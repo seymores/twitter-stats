@@ -8,5 +8,4 @@
         followers-count (:followers_count user)
         friends-count (:friends_count user)
         ratio (/ followers-count friends-count)]
-    ;(if () true false)
-    ))
+    (< 0.8 ratio 1.5) ))
