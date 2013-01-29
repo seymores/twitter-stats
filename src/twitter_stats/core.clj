@@ -1,7 +1,6 @@
 (ns twitter-stats.core
-  (:use 
-    [twitter-stats.creds]
-    [twitter-stats.theories]
+  (:use [twitter-stats.creds]
+    ;[twitter-stats.theories]
     [twitter-stats.redis]
     [twitter.oauth]
     [twitter.callbacks]
@@ -98,6 +97,7 @@
 (defn dump-by-id
   "Save a data dump of a given twitter user by ID"
   [user-id]
-  (let [username (:screen_name (:body (users-show :oauth-creds *creds* :params {:user-id user-id})))]
+  (let [username (:screen_name (:body (users-show :oauth-creds *creds* 
+                                                  :params {:user-id user-id})))]
     (dump username)))
 
