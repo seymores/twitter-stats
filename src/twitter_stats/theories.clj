@@ -16,8 +16,16 @@
   (let [user      (:body (get<-db username))
         bg-img    (:profile_background_image_url_https user)
         bg-df-count (count (.split bg-img))
-        bg-tile   (:profile_background_tile user)]
-    (or (> bg-df-count 1) bg-tile)))
+        bg-tile   (:profile_background_tile user)
+        df-pic    (:profile_image_url user)
+        df-pr-pic (.contains df-pic "default_profile_0")]
+    (or (> bg-df-count 1) bg-tile df-pr-pic)))
+
+(defn default-profile-state?
+  "Check this account profile is in default state"
+  [username]
+  (let [user (:body (get<-db username))]
+    (and (:default_profile user) (:default_profile_image user))))
 
 (defn is-location-set?
   "Check if the user set the location -- no location = bad"
