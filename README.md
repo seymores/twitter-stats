@@ -38,6 +38,7 @@ Check if the account is being followed or following any other fake accounts. Gen
 - Follower / Friends ratio
 - Friend accounts mostly legit?
 - Follower accounts mostly legit?
+-
 
 ---
 
